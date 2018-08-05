@@ -7,16 +7,22 @@
 //
 // Michael Bone
 // 5th August 2018
+
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const cheerio = require("cheerio");
-const request = require("request-promise-native");
-const sqlite3 = require("sqlite3");
+
+import * as cheerio from "cheerio";
+import * as request from "request-promise-native";
+import * as sqlite3 from "sqlite3";
+import * as moment from "moment";
+
 sqlite3.verbose();
+
 const DevelopmentApplicationsMainUrl = "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/default.aspx";
 const DevelopmentApplicationsEnquiryUrl = "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/GeneralEnquiry/EnquiryLists.aspx?ModuleCode=LAP";
 const CommentUrl = "mailto:csu@wtcc.sa.gov.au";
+
 // Sets up an sqlite database.
+
 async function initializeDatabase() {
     return new Promise((resolve, reject) => {
         let database = new sqlite3.Database("data.sqlite");
@@ -26,7 +32,9 @@ async function initializeDatabase() {
         });
     });
 }
+
 // Inserts a row in the database if it does not already exist.
+
 async function insertRow(database, developmentApplication) {
     return new Promise((resolve, reject) => {
         let sqlStatement = database.prepare("insert or ignore into [data] values (?, ?, ?, ?, ?, ?, ?, ?, ?)");
@@ -40,67 +48,85 @@ async function insertRow(database, developmentApplication) {
             developmentApplication.receivedDate,
             null,
             null
-        ], function (error, row) {
+        ], function(error, row) {
             if (error) {
                 console.error(error);
                 reject(error);
-            }
-            else {
+            } else {
                 if (this.changes > 0)
                     console.log(`    Inserted: application \"${developmentApplication.applicationNumber}\" with address \"${developmentApplication.address}\" and reason \"${developmentApplication.reason}\" into the database.`);
                 else
                     console.log(`    Skipped: application \"${developmentApplication.applicationNumber}\" with address \"${developmentApplication.address}\" and reason \"${developmentApplication.reason}\" because it was already present in the database.`);
-                sqlStatement.finalize(); // releases any locks
+                sqlStatement.finalize();  // releases any locks
                 resolve(row);
             }
         });
     });
 }
+
 // Gets a random integer in the specified range: [minimum, maximum).
+
 function getRandom(minimum, maximum) {
     return Math.floor(Math.random() * (Math.floor(maximum) - Math.ceil(minimum))) + Math.ceil(minimum);
 }
+
 // Parses the development applications.
+
 async function main() {
     // Ensure that the database exists.
+
     let database = await initializeDatabase();
+
     // Retrieve the main page.
+
     console.log(`Retrieving page: ${DevelopmentApplicationsMainUrl}`);
     let jar = request.jar();
     let body = await request({ url: DevelopmentApplicationsMainUrl, jar: jar });
     let $ = cheerio.load(body);
+    
     // Retrieve the enquiry page.
+
     console.log(`Retrieving page: ${DevelopmentApplicationsEnquiryUrl}`);
     body = await request({ url: DevelopmentApplicationsEnquiryUrl, jar: jar });
     $ = cheerio.load(body);
+
     console.log(body);
+
     // // Find all CSV URLs on the main page.
+
     // let urls: string[] = [];
     // for (let element of $("a.resource-url-analytics").get())
     //     if (!urls.some(url => url === element.attribs.href))
     //         urls.push(element.attribs.href);
+
     // if (urls.length === 0) {
     //     console.log(`No CSV files to parse were found on the page: ${DevelopmentApplicationsUrl}`);
     //     return;
     // }
+
     // // Retrieve two of the development application CSV files (the most recent and one other random
     // // selection).  Retrieving all development application CSV files may otherwise use too much
     // // memory and result in morph.io terminating the current process.
+    
     // let selectedUrls = [ urls.pop() ];
     // if (urls.length >= 1)
     //     selectedUrls.push(urls[getRandom(0, urls.length)]);
+
     // for (let url of selectedUrls) {
     //     console.log(`Retrieving: ${url}`);
     //     let body = await request({ url: url });
     //     let rows = parse(body);
     //     if (rows.length === 0)
     //         continue;
+
     //     // Determine which columns contain the required development application information.
+
     //     let applicationNumberColumnIndex = -1;
     //     let receivedDateColumnIndex = -1;
     //     let reasonColumnIndex = -1;
     //     let addressColumnIndex1 = -1;
     //     let addressColumnIndex2 = -1;
+
     //     for (let columnIndex = 0; columnIndex < rows[0].length; columnIndex++) {
     //         let cell: string = rows[0][columnIndex];
     //         if (cell === "ApplicationNumber")
@@ -114,11 +140,14 @@ async function main() {
     //         else if (cell === "PropertySuburbPostCode")
     //             addressColumnIndex2 = columnIndex;
     //     }
+
     //     if (applicationNumberColumnIndex < 0 || (addressColumnIndex1 < 0 && addressColumnIndex2 < 0)) {
     //         console.log(`Could not parse any development applications from ${url}.`);
     //         continue;
     //     }
+
     //     // Extract the development application information.
+
     //     let developmentApplications = [];
     //     for (let rowIndex = 1; rowIndex < rows.length; rowIndex++) {
     //         let row = rows[rowIndex];
@@ -129,6 +158,7 @@ async function main() {
     //         let receivedDate = moment(((receivedDateColumnIndex < 0) ? null : row[receivedDateColumnIndex].trim()), "D/MM/YYYY HH:mm:ss A", true);  // allows the leading zero of the day to be omitted
     //         let address = address1 + ((address1 !== "" && address2 !== "") ? " " : "") + address2;
     //         address = address.trim().replace(/\s\s+/g, " ");  // reduce multiple consecutive spaces in the address to a single space
+
     //         if (applicationNumber !== "" && address !== "")
     //             await insertRow(database, {
     //                 applicationNumber: applicationNumber,
@@ -142,5 +172,5 @@ async function main() {
     //     }
     // }
 }
+
 main().then(() => console.log("Complete.")).catch(error => console.error(error));
-//# sourceMappingURL=scraper.js.map
