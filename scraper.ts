@@ -17,8 +17,8 @@ import * as moment from "moment";
 
 sqlite3.verbose();
 
-const DevelopmentApplicationsMainUrl = "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/default.aspx?js=-1882816898";
-const DevelopmentApplicationsEnquiryUrl = "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/GeneralEnquiry/EnquiryLists.aspx";
+const DevelopmentApplicationsMainUrl = "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/default.aspx?js=1236367463";
+const DevelopmentApplicationsEnquiryUrl = "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/GeneralEnquiry/EnquiryLists.aspx?js=1236367463";
 const CommentUrl = "mailto:csu@wtcc.sa.gov.au";
 
 // Sets up an sqlite database.
@@ -113,7 +113,7 @@ async function main() {
         },
         jar: jar
     });
-    console.log(body);
+    // console.log(body);
     $ = cheerio.load(body);
 
     // let eventValidation = $("input[name='__EVENTVALIDATION']").val();
@@ -124,55 +124,57 @@ async function main() {
 
     // Need referer: https://github.com/planningalerts-scrapers/wollongong/blob/master/scraper.rb
     
-    console.log("Test 1");
-    body = await request({
-        url: "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/GeneralEnquiry/EnquirySearch.aspx",
-        headers: {
-            "Referer": "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/default.aspx",
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134"
-        },
-        jar: jar
-    });
+    // console.log("Test 1");
+    // body = await request({
+    //     url: "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/GeneralEnquiry/EnquirySearch.aspx",
+    //     headers: {
+    //         "Referer": "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/default.aspx",
+    //         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134"
+    //     },
+    //     jar: jar
+    // });
     // console.log(body);
-    $ = cheerio.load(body);
+    // $ = cheerio.load(body);
+
+    // let eventValidation = $("input[name='__EVENTVALIDATION']").val();
+    // let viewState = $("input[name='__VIEWSTATE']").val();
+
+    // console.log("Test 2");
+    // body = await request({
+    //     url: "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/GeneralEnquiry/EnquirySearch.aspx",
+    //     method: "POST",
+    //     followAllRedirects: true,
+    //     headers: {
+    //         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+    //         "Accept-Encoding": "",
+    //         "Accept-Language": "en-GB,en-US;q=0.9,en;q=0.8",
+    //         "Cache-Control": "max-age=0",
+    //         "Connection": "keep-alive",
+    //         "Content-Type": "application/x-www-form-urlencoded",
+    //         "Host": "epathway.wtcc.sa.gov.au",
+    //         "Origin": "https://epathway.wtcc.sa.gov.au",
+    //         "Referer": "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/GeneralEnquiry/EnquirySearch.aspx",
+    //         "Upgrade-Insecure-Requests": "1",
+    //         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.84 Safari/537.36"
+    //     },
+    //     jar: jar,
+    //     form: {
+    //         __EVENTVALIDATION: eventValidation,
+    //         __VIEWSTATE: viewState,
+    //         __VIEWSTATEGENERATOR: "4A3184D0"
+    //     }
+    // });
+    // console.log(body);
+    // $ = cheerio.load(body);
+
+    // Click the "Date" tab.
 
     let eventValidation = $("input[name='__EVENTVALIDATION']").val();
     let viewState = $("input[name='__VIEWSTATE']").val();
 
-    console.log("Test 2");
-    body = await request({
-        url: "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/GeneralEnquiry/EnquirySearch.aspx",
-        method: "POST",
-        followAllRedirects: true,
-        headers: {
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
-            "Accept-Encoding": "",
-            "Accept-Language": "en-GB,en-US;q=0.9,en;q=0.8",
-            "Cache-Control": "max-age=0",
-            "Connection": "keep-alive",
-            "Content-Type": "application/x-www-form-urlencoded",
-            "Host": "epathway.wtcc.sa.gov.au",
-            "Origin": "https://epathway.wtcc.sa.gov.au",
-            "Referer": "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/GeneralEnquiry/EnquirySearch.aspx",
-            "Upgrade-Insecure-Requests": "1",
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.84 Safari/537.36"
-        },
-        jar: jar,
-        form: {
-            __EVENTVALIDATION: eventValidation,
-            __VIEWSTATE: viewState,
-            __VIEWSTATEGENERATOR: "4A3184D0"
-        }
-    });
-    console.log(body);
-    $ = cheerio.load(body);
-
-    eventValidation = $("input[name='__EVENTVALIDATION']").val();
-    viewState = $("input[name='__VIEWSTATE']").val();
-
     console.log("Test 2.1");
     body = await request({
-        url: "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/GeneralEnquiry/EnquirySearch.aspx",
+        url: "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/GeneralEnquiry/EnquirySearch.aspx?js=1236367463",
         method: "POST",
         followAllRedirects: true,
         headers: {
@@ -202,7 +204,7 @@ async function main() {
             "ctl00$mWidth": "1280"
         }
     });
-    console.log(body);
+    // console.log(body);
     $ = cheerio.load(body);
 
     // eventValidation = $("input[name='__EVENTVALIDATION']").val();
@@ -234,8 +236,22 @@ async function main() {
 
     console.log("Test 3");
     body = await request({
-        url: "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/GeneralEnquiry/EnquirySummaryView.aspx",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        url: "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/GeneralEnquiry/EnquirySearch.aspx?js=1236367463",
+        method: "POST",
+        followAllRedirects: true,
+        headers: {
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+            "Accept-Encoding": "",
+            "Accept-Language": "en-GB,en-US;q=0.9,en;q=0.8",
+            "Cache-Control": "max-age=0",
+            "Connection": "keep-alive",
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Host": "epathway.wtcc.sa.gov.au",
+            "Origin": "https://epathway.wtcc.sa.gov.au",
+            "Referer": "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/GeneralEnquiry/EnquirySearch.aspx",
+            "Upgrade-Insecure-Requests": "1",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.84 Safari/537.36"
+        },
         jar: jar,
         form: {
             __EVENTVALIDATION: eventValidation,
