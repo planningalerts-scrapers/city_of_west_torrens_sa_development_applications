@@ -17,8 +17,8 @@ import * as moment from "moment";
 
 sqlite3.verbose();
 
-const DevelopmentApplicationsMainUrl = "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/default.aspx";
-const DevelopmentApplicationsEnquiryUrl = "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/GeneralEnquiry/EnquiryLists.aspx?ModuleCode=LAP";
+const DevelopmentApplicationsMainUrl = "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/default.aspx?js=-1882816898";
+const DevelopmentApplicationsEnquiryUrl = "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/GeneralEnquiry/EnquiryLists.aspx";
 const CommentUrl = "mailto:csu@wtcc.sa.gov.au";
 
 // Sets up an sqlite database.
@@ -81,16 +81,175 @@ async function main() {
 
     console.log(`Retrieving page: ${DevelopmentApplicationsMainUrl}`);
     let jar = request.jar();
-    let body = await request({ url: DevelopmentApplicationsMainUrl, jar: jar });
+    let body = await request({
+        url: DevelopmentApplicationsMainUrl,
+        headers: {
+            "Accept": "text/html, application/xhtml+xml, application/xml; q=0.9, */*; q=0.8",
+            "Accept-Encoding": "",
+            "Accept-Language": "en-US, en; q=0.5",
+            "Connection": "Keep-Alive",
+            "Host": "epathway.wtcc.sa.gov.au",
+            "Upgrade-Insecure-Requests": "1",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134"
+        },
+        jar: jar
+    });
     let $ = cheerio.load(body);
     
     // Retrieve the enquiry page.
 
     console.log(`Retrieving page: ${DevelopmentApplicationsEnquiryUrl}`);
-    body = await request({ url: DevelopmentApplicationsEnquiryUrl, jar: jar });
+    body = await request({
+        url: DevelopmentApplicationsEnquiryUrl,
+        headers: {
+            "Accept": "text/html, application/xhtml+xml, application/xml; q=0.9, */*; q=0.8",
+            "Accept-Encoding": "",
+            "Accept-Language": "en-US, en; q=0.5",
+            "Connection": "Keep-Alive",
+            "Host": "epathway.wtcc.sa.gov.au",
+            "Referer": "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/default.aspx",
+            "Upgrade-Insecure-Requests": "1",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134"
+        },
+        jar: jar
+    });
+    console.log(body);
     $ = cheerio.load(body);
 
+    // let eventValidation = $("input[name='__EVENTVALIDATION']").val();
+    // let viewState = $("input[name='__VIEWSTATE']").val();
+
+    // console.log(eventValidation);
+    // console.log(viewState);
+
+    // Need referer: https://github.com/planningalerts-scrapers/wollongong/blob/master/scraper.rb
+    
+    console.log("Test 1");
+    body = await request({
+        url: "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/GeneralEnquiry/EnquirySearch.aspx",
+        headers: {
+            "Referer": "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/default.aspx",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134"
+        },
+        jar: jar
+    });
+    // console.log(body);
+    $ = cheerio.load(body);
+
+    let eventValidation = $("input[name='__EVENTVALIDATION']").val();
+    let viewState = $("input[name='__VIEWSTATE']").val();
+
+    console.log("Test 2");
+    body = await request({
+        url: "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/GeneralEnquiry/EnquirySearch.aspx",
+        method: "POST",
+        followAllRedirects: true,
+        headers: {
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+            "Accept-Encoding": "",
+            "Accept-Language": "en-GB,en-US;q=0.9,en;q=0.8",
+            "Cache-Control": "max-age=0",
+            "Connection": "keep-alive",
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Host": "epathway.wtcc.sa.gov.au",
+            "Origin": "https://epathway.wtcc.sa.gov.au",
+            "Referer": "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/GeneralEnquiry/EnquirySearch.aspx",
+            "Upgrade-Insecure-Requests": "1",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.84 Safari/537.36"
+        },
+        jar: jar,
+        form: {
+            __EVENTVALIDATION: eventValidation,
+            __VIEWSTATE: viewState,
+            __VIEWSTATEGENERATOR: "4A3184D0"
+        }
+    });
     console.log(body);
+    $ = cheerio.load(body);
+
+    eventValidation = $("input[name='__EVENTVALIDATION']").val();
+    viewState = $("input[name='__VIEWSTATE']").val();
+
+    console.log("Test 2.1");
+    body = await request({
+        url: "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/GeneralEnquiry/EnquirySearch.aspx",
+        method: "POST",
+        followAllRedirects: true,
+        headers: {
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+            "Accept-Encoding": "",
+            "Accept-Language": "en-GB,en-US;q=0.9,en;q=0.8",
+            "Cache-Control": "max-age=0",
+            "Connection": "keep-alive",
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Host": "epathway.wtcc.sa.gov.au",
+            "Origin": "https://epathway.wtcc.sa.gov.au",
+            "Referer": "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/GeneralEnquiry/EnquirySearch.aspx",
+            "Upgrade-Insecure-Requests": "1",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.84 Safari/537.36"
+        },
+        jar: jar,
+        form: {
+            __EVENTARGUMENT: "2",
+            __EVENTTARGET: "ctl00$MainBodyContent$mGeneralEnquirySearchControl$mTabControl$tabControlMenu",
+            __EVENTVALIDATION: eventValidation,
+            __LASTFOCUS: "",
+            __VIEWSTATE: viewState,
+            __VIEWSTATEGENERATOR: "4A3184D0",
+            "ctl00$MainBodyContent$mGeneralEnquirySearchControl$mEnquiryListsDropDownList": 10,
+            "ctl00$MainBodyContent$mGeneralEnquirySearchControl$mTabControl$ctl04$mFormattedNumberTextBox": "",
+            "ctl00$mHeight": "907",
+            "ctl00$mWidth": "1280"
+        }
+    });
+    console.log(body);
+    $ = cheerio.load(body);
+
+    // eventValidation = $("input[name='__EVENTVALIDATION']").val();
+    // viewState = $("input[name='__VIEWSTATE']").val();
+
+    // console.log("Test 2.2");
+    // body = await request({
+    //     url: "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/GeneralEnquiry/EnquirySearch.aspx?ctl00%24MainBodyContent%24mGeneralEnquirySearchControl%24mTabControl%24ti=2",
+    //     headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    //     jar: jar,
+    //     form: {
+    //         __EVENTARGUMENT: "2",
+    //         __EVENTTARGET: "ctl00$MainBodyContent$mGeneralEnquirySearchControl$mTabControl$tabControlMenu",
+    //         __EVENTVALIDATION: eventValidation,
+    //         __LASTFOCUS: "",
+    //         __VIEWSTATE: viewState,
+    //         __VIEWSTATEGENERATOR: "4A3184D0",
+    //         "ctl00$MainBodyContent$mGeneralEnquirySearchControl$mEnquiryListsDropDownList": 10,
+    //         "ctl00$MainBodyContent$mGeneralEnquirySearchControl$mTabControl$ctl04$mFormattedNumberTextBox": "",
+    //         "ctl00$mHeight": "907",
+    //         "ctl00$mWidth": "1280"
+    //     }
+    // });
+    // console.log(body);
+    // $ = cheerio.load(body);
+
+    eventValidation = $("input[name='__EVENTVALIDATION']").val();
+    viewState = $("input[name='__VIEWSTATE']").val();
+
+    console.log("Test 3");
+    body = await request({
+        url: "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/GeneralEnquiry/EnquirySummaryView.aspx",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        jar: jar,
+        form: {
+            __EVENTVALIDATION: eventValidation,
+            __VIEWSTATE: viewState,
+            "ctl00$MainBodyContent$mGeneralEnquirySearchControl$mEnquiryListsDropDownList": "10",
+            "ctl00$MainBodyContent$mGeneralEnquirySearchControl$mSearchButton": "Search",
+            "ctl00$MainBodyContent$mGeneralEnquirySearchControl$mTabControl$ctl14$DateSearchRadioGroup": "mLast30RadioButton",
+            "ctl00$MainBodyContent$mGeneralEnquirySearchControl$mTabControl$ctl14$mFromDatePicker$dateTextBox": "08/07/2018",
+            "ctl00$MainBodyContent$mGeneralEnquirySearchControl$mTabControl$ctl14$mToDatePicker$dateTextBox": "06/08/2018",
+            "ctl00$mHeight": "907",
+            "ctl00$mWidth": "1280"
+    } });
+    console.log(body);
+    $ = cheerio.load(body);
 
     // // Find all CSV URLs on the main page.
 
