@@ -17,7 +17,7 @@ import * as moment from "moment";
 
 sqlite3.verbose();
 
-const DevelopmentApplicationsMainUrl = "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/default.aspx?js=1236367463";
+const DevelopmentApplicationsMainUrl = "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/default.aspx";
 const DevelopmentApplicationsEnquiryUrl = "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/GeneralEnquiry/EnquiryLists.aspx?js=1236367463";
 const CommentUrl = "mailto:csu@wtcc.sa.gov.au";
 
@@ -94,8 +94,27 @@ async function main() {
         },
         jar: jar
     });
+
     let $ = cheerio.load(body);
-    
+    for (let script of $("script").get().filter(script => $(script).text().indexOf(".aspx?js=") >= 0)) {
+        let text = $(script).text();
+        let startIndex = text.indexOf(".aspx?js=");
+        if (startIndex >= 0) {
+            startIndex += ".aspx?js=".length;
+            let endIndex = text.replace(/"/g, "'").indexOf("'", startIndex);
+            if (endIndex >= 0) {
+                let token = text.substring(startIndex, endIndex);
+                
+            }
+        }
+    }
+
+    // Obtain the "js=" token from the page and re-submit the page with the token in the query
+    // string.  This then indicates that JavaScript is available in the "client" and so all
+    // subsequent pages served by the web server will include JavaScript.
+
+
+
     // Retrieve the enquiry page.
 
     console.log(`Retrieving page: ${DevelopmentApplicationsEnquiryUrl}`);
