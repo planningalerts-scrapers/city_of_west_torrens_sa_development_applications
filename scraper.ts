@@ -97,10 +97,7 @@ async function main() {
     // Retrieve the main page.
 
     console.log(`Retrieving page: ${DevelopmentApplicationsDefaultUrl}`);
-    let body = await request({
-        url: DevelopmentApplicationsDefaultUrl,
-        jar: jar
-    });
+    let body = await request({ url: DevelopmentApplicationsDefaultUrl, jar: jar });
 
     // Obtain the "js=" token from the page and re-submit the page with the token in the query
     // string.  This then indicates that JavaScript is available in the "client" and so all
@@ -110,19 +107,13 @@ async function main() {
     if (token !== null) {
         let tokenUrl = `${DevelopmentApplicationsDefaultUrl}?js=${token}`;
         console.log(`Retrieving page: ${tokenUrl}`);
-        await request({
-            url: tokenUrl,
-            jar: jar
-        });    
+        await request({ url: tokenUrl, jar: jar });    
     }
 
     // Retrieve the enquiry page.
 
     console.log(`Retrieving page: ${DevelopmentApplicationsEnquiryListsUrl}`);
-    body = await request({
-        url: DevelopmentApplicationsEnquiryListsUrl,
-        jar: jar
-    });
+    body = await request({ url: DevelopmentApplicationsEnquiryListsUrl, jar: jar });
     let $ = cheerio.load(body);
     let eventValidation = $("input[name='__EVENTVALIDATION']").val();
     let viewState = $("input[name='__VIEWSTATE']").val();
