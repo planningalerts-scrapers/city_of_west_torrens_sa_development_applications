@@ -91,7 +91,6 @@ async function main() {
             "Accept-Language": "en-US, en; q=0.5",
             "Connection": "Keep-Alive",
             "Host": "epathway.wtcc.sa.gov.au",
-            "Upgrade-Insecure-Requests": "1",
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134"
         }
     });
@@ -111,7 +110,6 @@ async function main() {
                 "Accept-Language": "en-US, en; q=0.5",
                 "Connection": "Keep-Alive",
                 "Host": "epathway.wtcc.sa.gov.au",
-                "Upgrade-Insecure-Requests": "1",
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134"
             }
         });
@@ -128,7 +126,6 @@ async function main() {
             "Connection": "Keep-Alive",
             "Host": "epathway.wtcc.sa.gov.au",
             "Referer": DevelopmentApplicationsDefaultUrl,
-            "Upgrade-Insecure-Requests": "1",
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134"
         },
     });
@@ -152,7 +149,6 @@ async function main() {
             "Host": "epathway.wtcc.sa.gov.au",
             "Origin": "https://epathway.wtcc.sa.gov.au",
             "Referer": DevelopmentApplicationsEnquiryListsUrl,
-            "Upgrade-Insecure-Requests": "1",
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.84 Safari/537.36"
         },
         form: {
@@ -187,7 +183,6 @@ async function main() {
             "Host": "epathway.wtcc.sa.gov.au",
             "Origin": "https://epathway.wtcc.sa.gov.au",
             "Referer": DevelopmentApplicationsEnquirySearchUrl,
-            "Upgrade-Insecure-Requests": "1",
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.84 Safari/537.36"
         },
         form: {
@@ -231,7 +226,7 @@ async function main() {
             }
         }
         // Navigate to the next page of development applications.
-        console.log("Retrieving the next page of applications.");
+        console.log(`Retrieving the next page of applications (page ${pageNumber} of ${pageCount}).`);
         body = await request({
             url: `${DevelopmentApplicationsEnquirySummaryViewUrl}?PageNumber=${pageNumber}`,
             jar: jar,
@@ -247,7 +242,6 @@ async function main() {
                 "Host": "epathway.wtcc.sa.gov.au",
                 "Origin": "https://epathway.wtcc.sa.gov.au",
                 "Referer": DevelopmentApplicationsEnquirySummaryViewUrl,
-                "Upgrade-Insecure-Requests": "1",
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.84 Safari/537.36"
             },
             form: {
