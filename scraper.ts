@@ -102,8 +102,6 @@ async function main() {
         jar: jar,
         headers: {
             "Accept": "text/html, application/xhtml+xml, application/xml; q=0.9, */*; q=0.8",
-            "Accept-Encoding": "",
-            "Accept-Language": "en-US, en; q=0.5",
             "Connection": "Keep-Alive",
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134"
         }
@@ -122,8 +120,6 @@ async function main() {
             jar: jar,
             headers: {
                 "Accept": "text/html, application/xhtml+xml, application/xml; q=0.9, */*; q=0.8",
-                "Accept-Encoding": "",
-                "Accept-Language": "en-US, en; q=0.5",
                 "Connection": "Keep-Alive",
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134"
             }
@@ -138,8 +134,6 @@ async function main() {
         jar: jar,
         headers: {
             "Accept": "text/html, application/xhtml+xml, application/xml; q=0.9, */*; q=0.8",
-            "Accept-Encoding": "",
-            "Accept-Language": "en-US, en; q=0.5",
             "Connection": "Keep-Alive",
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134"
         },
@@ -158,8 +152,6 @@ async function main() {
         followAllRedirects: true,
         headers: {
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
-            "Accept-Encoding": "",
-            "Accept-Language": "en-GB,en-US;q=0.9,en;q=0.8",
             "Connection": "keep-alive",
             "Content-Type": "application/x-www-form-urlencoded",
             "Origin": "https://epathway.wtcc.sa.gov.au",
@@ -192,8 +184,6 @@ async function main() {
         followAllRedirects: true,
         headers: {
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
-            "Accept-Encoding": "",
-            "Accept-Language": "en-GB,en-US;q=0.9,en;q=0.8",
             "Connection": "keep-alive",
             "Content-Type": "application/x-www-form-urlencoded",
             "Origin": "https://epathway.wtcc.sa.gov.au",
@@ -259,8 +249,6 @@ async function main() {
             followAllRedirects: true,
             headers: {
                 "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
-                "Accept-Encoding": "",
-                "Accept-Language": "en-GB,en-US;q=0.9,en;q=0.8",
                 "Connection": "keep-alive",
                 "Content-Type": "application/x-www-form-urlencoded",
                 "Origin": "https://epathway.wtcc.sa.gov.au",
