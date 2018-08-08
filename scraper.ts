@@ -99,10 +99,7 @@ async function main() {
     console.log(`Retrieving page: ${DevelopmentApplicationsDefaultUrl}`);
     let body = await request({
         url: DevelopmentApplicationsDefaultUrl,
-        jar: jar,
-        headers: {
-            "Connection": "Keep-Alive"
-        }
+        jar: jar
     });
 
     // Obtain the "js=" token from the page and re-submit the page with the token in the query
@@ -115,10 +112,7 @@ async function main() {
         console.log(`Retrieving page: ${tokenUrl}`);
         await request({
             url: tokenUrl,
-            jar: jar,
-            headers: {
-                "Connection": "Keep-Alive"
-            }
+            jar: jar
         });    
     }
 
@@ -127,10 +121,7 @@ async function main() {
     console.log(`Retrieving page: ${DevelopmentApplicationsEnquiryListsUrl}`);
     body = await request({
         url: DevelopmentApplicationsEnquiryListsUrl,
-        jar: jar,
-        headers: {
-            "Connection": "Keep-Alive"
-        },
+        jar: jar
     });
     let $ = cheerio.load(body);
     let eventValidation = $("input[name='__EVENTVALIDATION']").val();
@@ -145,7 +136,6 @@ async function main() {
         method: "POST",
         followAllRedirects: true,
         headers: {
-            "Connection": "keep-alive",
             "Content-Type": "application/x-www-form-urlencoded"
         },
         form: {
@@ -174,7 +164,6 @@ async function main() {
         method: "POST",
         followAllRedirects: true,
         headers: {
-            "Connection": "keep-alive",
             "Content-Type": "application/x-www-form-urlencoded"
         },
         form: {
@@ -236,7 +225,6 @@ async function main() {
             method: "POST",
             followAllRedirects: true,
             headers: {
-                "Connection": "keep-alive",
                 "Content-Type": "application/x-www-form-urlencoded"
             },
             form: {
