@@ -139,10 +139,7 @@ async function main() {
             __EVENTARGUMENT: "2",
             __EVENTTARGET: "ctl00$MainBodyContent$mGeneralEnquirySearchControl$mTabControl$tabControlMenu",
             __EVENTVALIDATION: eventValidation,
-            __LASTFOCUS: "",
-            __VIEWSTATE: viewState,
-            "ctl00$MainBodyContent$mGeneralEnquirySearchControl$mEnquiryListsDropDownList": 10,
-            "ctl00$MainBodyContent$mGeneralEnquirySearchControl$mTabControl$ctl04$mFormattedNumberTextBox": ""
+            __VIEWSTATE: viewState
         }
     });
     $ = cheerio.load(body);
@@ -222,7 +219,6 @@ async function main() {
                 __EVENTARGUMENT: "",
                 __EVENTTARGET: `ctl00$MainBodyContent$mPagingControl$pageButton_${pageNumber}`,
                 __EVENTVALIDATION: eventValidation,
-                __LASTFOCUS: "",
                 __VIEWSTATE: viewState
             }
         });
