@@ -101,9 +101,7 @@ async function main() {
         url: DevelopmentApplicationsDefaultUrl,
         jar: jar,
         headers: {
-            "Accept": "text/html, application/xhtml+xml, application/xml; q=0.9, */*; q=0.8",
-            "Connection": "Keep-Alive",
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134"
+            "Connection": "Keep-Alive"
         }
     });
 
@@ -119,9 +117,7 @@ async function main() {
             url: tokenUrl,
             jar: jar,
             headers: {
-                "Accept": "text/html, application/xhtml+xml, application/xml; q=0.9, */*; q=0.8",
-                "Connection": "Keep-Alive",
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134"
+                "Connection": "Keep-Alive"
             }
         });    
     }
@@ -133,9 +129,7 @@ async function main() {
         url: DevelopmentApplicationsEnquiryListsUrl,
         jar: jar,
         headers: {
-            "Accept": "text/html, application/xhtml+xml, application/xml; q=0.9, */*; q=0.8",
-            "Connection": "Keep-Alive",
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134"
+            "Connection": "Keep-Alive"
         },
     });
     let $ = cheerio.load(body);
@@ -151,11 +145,8 @@ async function main() {
         method: "POST",
         followAllRedirects: true,
         headers: {
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
             "Connection": "keep-alive",
-            "Content-Type": "application/x-www-form-urlencoded",
-            "Origin": "https://epathway.wtcc.sa.gov.au",
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.84 Safari/537.36"
+            "Content-Type": "application/x-www-form-urlencoded"
         },
         form: {
             __EVENTARGUMENT: "2",
@@ -183,11 +174,8 @@ async function main() {
         method: "POST",
         followAllRedirects: true,
         headers: {
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
             "Connection": "keep-alive",
-            "Content-Type": "application/x-www-form-urlencoded",
-            "Origin": "https://epathway.wtcc.sa.gov.au",
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.84 Safari/537.36"
+            "Content-Type": "application/x-www-form-urlencoded"
         },
         form: {
             __EVENTVALIDATION: eventValidation,
@@ -248,11 +236,8 @@ async function main() {
             method: "POST",
             followAllRedirects: true,
             headers: {
-                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
                 "Connection": "keep-alive",
-                "Content-Type": "application/x-www-form-urlencoded",
-                "Origin": "https://epathway.wtcc.sa.gov.au",
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.84 Safari/537.36"
+                "Content-Type": "application/x-www-form-urlencoded"
             },
             form: {
                 __EVENTARGUMENT: "",
