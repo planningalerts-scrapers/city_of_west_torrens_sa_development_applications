@@ -140,7 +140,7 @@ async function main() {
     let eventValidation = $("input[name='__EVENTVALIDATION']").val();
     let viewState = $("input[name='__VIEWSTATE']").val();
     // Click the "Date" tab.
-    console.log("Clicking the \"Date\" tab.");
+    console.log("Switching to the \"Date\" tab.");
     body = await request({
         url: DevelopmentApplicationsEnquirySearchUrl,
         jar: jar,
@@ -176,9 +176,9 @@ async function main() {
     eventValidation = $("input[name='__EVENTVALIDATION']").val();
     viewState = $("input[name='__VIEWSTATE']").val();
     // Search for development applications in a date range.
-    let startDate = "08/07/2018";
-    let endDate = "06/08/2018";
-    console.log(`Searching for applications from ${startDate} to ${endDate}.`);
+    let dateFrom = moment().subtract(1, "months").format("DD/MM/YYYY");
+    let dateTo = moment().format("DD/MM/YYYY");
+    console.log(`Searching for applications in the date range ${dateFrom} to ${dateTo}.`);
     body = await request({
         url: DevelopmentApplicationsEnquirySearchUrl,
         jar: jar,
@@ -203,8 +203,8 @@ async function main() {
             "ctl00$MainBodyContent$mGeneralEnquirySearchControl$mEnquiryListsDropDownList": "10",
             "ctl00$MainBodyContent$mGeneralEnquirySearchControl$mSearchButton": "Search",
             "ctl00$MainBodyContent$mGeneralEnquirySearchControl$mTabControl$ctl14$DateSearchRadioGroup": "mLast30RadioButton",
-            "ctl00$MainBodyContent$mGeneralEnquirySearchControl$mTabControl$ctl14$mFromDatePicker$dateTextBox": "08/07/2018",
-            "ctl00$MainBodyContent$mGeneralEnquirySearchControl$mTabControl$ctl14$mToDatePicker$dateTextBox": "06/08/2018",
+            "ctl00$MainBodyContent$mGeneralEnquirySearchControl$mTabControl$ctl14$mFromDatePicker$dateTextBox": dateFrom,
+            "ctl00$MainBodyContent$mGeneralEnquirySearchControl$mTabControl$ctl14$mToDatePicker$dateTextBox": dateTo,
             "ctl00$mHeight": "907",
             "ctl00$mWidth": "1280"
         }
