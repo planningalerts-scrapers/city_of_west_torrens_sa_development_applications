@@ -114,9 +114,6 @@ async function main() {
         jar: jar,
         method: "POST",
         followAllRedirects: true,
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
-        },
         form: {
             __EVENTARGUMENT: "2",
             __EVENTTARGET: "ctl00$MainBodyContent$mGeneralEnquirySearchControl$mTabControl$tabControlMenu",
@@ -139,9 +136,6 @@ async function main() {
         jar: jar,
         method: "POST",
         followAllRedirects: true,
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
-        },
         form: {
             __EVENTVALIDATION: eventValidation,
             __VIEWSTATE: viewState,
@@ -191,9 +185,6 @@ async function main() {
             jar: jar,
             method: "POST",
             followAllRedirects: true,
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
-            },
             form: {
                 __EVENTARGUMENT: "",
                 __EVENTTARGET: `ctl00$MainBodyContent$mPagingControl$pageButton_${pageNumber}`,
