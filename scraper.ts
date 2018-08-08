@@ -105,7 +105,6 @@ async function main() {
             "Accept-Encoding": "",
             "Accept-Language": "en-US, en; q=0.5",
             "Connection": "Keep-Alive",
-            "Host": "epathway.wtcc.sa.gov.au",
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134"
         }
     });
@@ -126,7 +125,6 @@ async function main() {
                 "Accept-Encoding": "",
                 "Accept-Language": "en-US, en; q=0.5",
                 "Connection": "Keep-Alive",
-                "Host": "epathway.wtcc.sa.gov.au",
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134"
             }
         });    
@@ -143,8 +141,6 @@ async function main() {
             "Accept-Encoding": "",
             "Accept-Language": "en-US, en; q=0.5",
             "Connection": "Keep-Alive",
-            "Host": "epathway.wtcc.sa.gov.au",
-            "Referer": DevelopmentApplicationsDefaultUrl,
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134"
         },
     });
@@ -164,12 +160,9 @@ async function main() {
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
             "Accept-Encoding": "",
             "Accept-Language": "en-GB,en-US;q=0.9,en;q=0.8",
-            "Cache-Control": "max-age=0",
             "Connection": "keep-alive",
             "Content-Type": "application/x-www-form-urlencoded",
-            "Host": "epathway.wtcc.sa.gov.au",
             "Origin": "https://epathway.wtcc.sa.gov.au",
-            "Referer": DevelopmentApplicationsEnquiryListsUrl,
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.84 Safari/537.36"
         },
         form: {
@@ -201,12 +194,9 @@ async function main() {
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
             "Accept-Encoding": "",
             "Accept-Language": "en-GB,en-US;q=0.9,en;q=0.8",
-            "Cache-Control": "max-age=0",
             "Connection": "keep-alive",
             "Content-Type": "application/x-www-form-urlencoded",
-            "Host": "epathway.wtcc.sa.gov.au",
             "Origin": "https://epathway.wtcc.sa.gov.au",
-            "Referer": DevelopmentApplicationsEnquirySearchUrl,
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.84 Safari/537.36"
         },
         form: {
@@ -256,6 +246,9 @@ async function main() {
             }
         }
 
+        if (pageNumber > pageCount)
+            break;
+
         // Navigate to the next page of development applications.
 
         console.log(`Retrieving the next page of applications (page ${pageNumber} of ${pageCount}).`);
@@ -268,12 +261,9 @@ async function main() {
                 "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
                 "Accept-Encoding": "",
                 "Accept-Language": "en-GB,en-US;q=0.9,en;q=0.8",
-                "Cache-Control": "max-age=0",
                 "Connection": "keep-alive",
                 "Content-Type": "application/x-www-form-urlencoded",
-                "Host": "epathway.wtcc.sa.gov.au",
                 "Origin": "https://epathway.wtcc.sa.gov.au",
-                "Referer": DevelopmentApplicationsEnquirySummaryViewUrl,
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.84 Safari/537.36"
             },
             form: {
