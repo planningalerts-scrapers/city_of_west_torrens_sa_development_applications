@@ -17,7 +17,7 @@ import * as moment from "moment";
 
 sqlite3.verbose();
 
-const DevelopmentApplicationsMainUrl = "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/default.aspx";
+const DevelopmentApplicationsDefaultUrl = "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/default.aspx";
 const DevelopmentApplicationsEnquiryListsUrl = "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/GeneralEnquiry/EnquiryLists.aspx";
 const DevelopmentApplicationsEnquirySearchUrl = "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/GeneralEnquiry/EnquirySearch.aspx";
 const DevelopmentApplicationsEnquirySummaryViewUrl = "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/GeneralEnquiry/EnquirySummaryView.aspx";
@@ -102,9 +102,9 @@ async function main() {
 
     // Retrieve the main page.
 
-    console.log(`Retrieving page: ${DevelopmentApplicationsMainUrl}`);
+    console.log(`Retrieving page: ${DevelopmentApplicationsDefaultUrl}`);
     let body = await request({
-        url: DevelopmentApplicationsMainUrl,
+        url: DevelopmentApplicationsDefaultUrl,
         jar: jar,
         headers: {
             "Accept": "text/html, application/xhtml+xml, application/xml; q=0.9, */*; q=0.8",
@@ -123,7 +123,7 @@ async function main() {
 
     let token = parseToken(body);
     if (token !== null) {
-        let tokenUrl = `${DevelopmentApplicationsMainUrl}?js=${token}`;
+        let tokenUrl = `${DevelopmentApplicationsDefaultUrl}?js=${token}`;
         console.log(`Retrieving page: ${tokenUrl}`);
         await request({
             url: tokenUrl,
@@ -152,7 +152,7 @@ async function main() {
             "Accept-Language": "en-US, en; q=0.5",
             "Connection": "Keep-Alive",
             "Host": "epathway.wtcc.sa.gov.au",
-            "Referer": DevelopmentApplicationsMainUrl,
+            "Referer": DevelopmentApplicationsDefaultUrl,
             "Upgrade-Insecure-Requests": "1",
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134"
         },
@@ -190,9 +190,7 @@ async function main() {
             __VIEWSTATE: viewState,
             __VIEWSTATEGENERATOR: "4A3184D0",
             "ctl00$MainBodyContent$mGeneralEnquirySearchControl$mEnquiryListsDropDownList": 10,
-            "ctl00$MainBodyContent$mGeneralEnquirySearchControl$mTabControl$ctl04$mFormattedNumberTextBox": "",
-            "ctl00$mHeight": "907",
-            "ctl00$mWidth": "1280"
+            "ctl00$MainBodyContent$mGeneralEnquirySearchControl$mTabControl$ctl04$mFormattedNumberTextBox": ""
         }
     });
     $ = cheerio.load(body);
@@ -230,9 +228,7 @@ async function main() {
             "ctl00$MainBodyContent$mGeneralEnquirySearchControl$mSearchButton": "Search",
             "ctl00$MainBodyContent$mGeneralEnquirySearchControl$mTabControl$ctl14$DateSearchRadioGroup": "mLast30RadioButton",
             "ctl00$MainBodyContent$mGeneralEnquirySearchControl$mTabControl$ctl14$mFromDatePicker$dateTextBox": dateFrom,
-            "ctl00$MainBodyContent$mGeneralEnquirySearchControl$mTabControl$ctl14$mToDatePicker$dateTextBox": dateTo,
-            "ctl00$mHeight": "907",
-            "ctl00$mWidth": "1280"
+            "ctl00$MainBodyContent$mGeneralEnquirySearchControl$mTabControl$ctl14$mToDatePicker$dateTextBox": dateTo
         }
     });
     $ = cheerio.load(body);
@@ -262,7 +258,7 @@ async function main() {
                         applicationNumber: applicationNumber,
                         address: address,
                         reason: reason,
-                        informationUrl: DevelopmentApplicationsMainUrl,
+                        informationUrl: DevelopmentApplicationsDefaultUrl,
                         commentUrl: CommentUrl,
                         scrapeDate: moment().format("YYYY-MM-DD"),
                         receivedDate: receivedDate.isValid() ? receivedDate.format("YYYY-MM-DD") : ""
