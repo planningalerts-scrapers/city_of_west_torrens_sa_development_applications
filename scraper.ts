@@ -83,12 +83,6 @@ function parseToken(body: string): string {
     return null;
 }
 
-// Gets a random integer in the specified range: [minimum, maximum).
-
-function getRandom(minimum: number, maximum: number) {
-    return Math.floor(Math.random() * (Math.floor(maximum) - Math.ceil(minimum))) + Math.ceil(minimum);
-}
-
 // Parses the development applications.
 
 async function main() {
@@ -188,7 +182,6 @@ async function main() {
             __EVENTVALIDATION: eventValidation,
             __LASTFOCUS: "",
             __VIEWSTATE: viewState,
-            __VIEWSTATEGENERATOR: "4A3184D0",
             "ctl00$MainBodyContent$mGeneralEnquirySearchControl$mEnquiryListsDropDownList": 10,
             "ctl00$MainBodyContent$mGeneralEnquirySearchControl$mTabControl$ctl04$mFormattedNumberTextBox": ""
         }
@@ -293,8 +286,7 @@ async function main() {
                 __EVENTTARGET: `ctl00$MainBodyContent$mPagingControl$pageButton_${pageNumber}`,
                 __EVENTVALIDATION: eventValidation,
                 __LASTFOCUS: "",
-                __VIEWSTATE: viewState,
-                __VIEWSTATEGENERATOR: "4A3184D0"
+                __VIEWSTATE: viewState
             }
         });
         $ = cheerio.load(body);
