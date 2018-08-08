@@ -18,7 +18,9 @@ import * as moment from "moment";
 sqlite3.verbose();
 
 const DevelopmentApplicationsMainUrl = "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/default.aspx";
-const DevelopmentApplicationsEnquiryUrl = "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/GeneralEnquiry/EnquiryLists.aspx?js=1236367463";
+const DevelopmentApplicationsEnquiryListsUrl = "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/GeneralEnquiry/EnquiryLists.aspx";
+const DevelopmentApplicationsEnquirySearchUrl = "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/GeneralEnquiry/EnquirySearch.aspx";
+const DevelopmentApplicationsEnquirySummaryViewUrl = "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/GeneralEnquiry/EnquirySummaryView.aspx";
 const CommentUrl = "mailto:csu@wtcc.sa.gov.au";
 
 // Sets up an sqlite database.
@@ -64,9 +66,26 @@ async function insertRow(database, developmentApplication) {
     });
 }
 
+// Parses the "js=" token from a page.
+
+function parseToken(body: string): string {
+    let $ = cheerio.load(body);
+    for (let script of $("script").get()) {
+        let text = $(script).text();
+        let startIndex = text.indexOf(".aspx?js=");
+        if (startIndex >= 0) {
+            startIndex += ".aspx?js=".length;
+            let endIndex = text.replace(/"/g, "'").indexOf("'", startIndex);
+            if (endIndex > startIndex)
+                return text.substring(startIndex, endIndex);
+        }
+    }
+    return null;
+}
+
 // Gets a random integer in the specified range: [minimum, maximum).
 
-function getRandom(minimum, maximum) {
+function getRandom(minimum: number, maximum: number) {
     return Math.floor(Math.random() * (Math.floor(maximum) - Math.ceil(minimum))) + Math.ceil(minimum);
 }
 
@@ -77,12 +96,16 @@ async function main() {
 
     let database = await initializeDatabase();
 
+    // Create one cookie jar and use it throughout.
+    
+    let jar = request.jar();
+
     // Retrieve the main page.
 
     console.log(`Retrieving page: ${DevelopmentApplicationsMainUrl}`);
-    let jar = request.jar();
     let body = await request({
         url: DevelopmentApplicationsMainUrl,
+        jar: jar,
         headers: {
             "Accept": "text/html, application/xhtml+xml, application/xml; q=0.9, */*; q=0.8",
             "Accept-Encoding": "",
@@ -91,109 +114,59 @@ async function main() {
             "Host": "epathway.wtcc.sa.gov.au",
             "Upgrade-Insecure-Requests": "1",
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134"
-        },
-        jar: jar
-    });
-
-    let $ = cheerio.load(body);
-    for (let script of $("script").get().filter(script => $(script).text().indexOf(".aspx?js=") >= 0)) {
-        let text = $(script).text();
-        let startIndex = text.indexOf(".aspx?js=");
-        if (startIndex >= 0) {
-            startIndex += ".aspx?js=".length;
-            let endIndex = text.replace(/"/g, "'").indexOf("'", startIndex);
-            if (endIndex >= 0) {
-                let token = text.substring(startIndex, endIndex);
-                
-            }
         }
-    }
+    });
 
     // Obtain the "js=" token from the page and re-submit the page with the token in the query
     // string.  This then indicates that JavaScript is available in the "client" and so all
     // subsequent pages served by the web server will include JavaScript.
 
-
+    let token = parseToken(body);
+    if (token !== null) {
+        let tokenUrl = `${DevelopmentApplicationsMainUrl}?js=${token}`;
+        console.log(`Retrieving page: ${tokenUrl}`);
+        await request({
+            url: tokenUrl,
+            jar: jar,
+            headers: {
+                "Accept": "text/html, application/xhtml+xml, application/xml; q=0.9, */*; q=0.8",
+                "Accept-Encoding": "",
+                "Accept-Language": "en-US, en; q=0.5",
+                "Connection": "Keep-Alive",
+                "Host": "epathway.wtcc.sa.gov.au",
+                "Upgrade-Insecure-Requests": "1",
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134"
+            }
+        });    
+    }
 
     // Retrieve the enquiry page.
 
-    console.log(`Retrieving page: ${DevelopmentApplicationsEnquiryUrl}`);
+    console.log(`Retrieving page: ${DevelopmentApplicationsEnquiryListsUrl}`);
     body = await request({
-        url: DevelopmentApplicationsEnquiryUrl,
+        url: DevelopmentApplicationsEnquiryListsUrl,
+        jar: jar,
         headers: {
             "Accept": "text/html, application/xhtml+xml, application/xml; q=0.9, */*; q=0.8",
             "Accept-Encoding": "",
             "Accept-Language": "en-US, en; q=0.5",
             "Connection": "Keep-Alive",
             "Host": "epathway.wtcc.sa.gov.au",
-            "Referer": "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/default.aspx",
+            "Referer": DevelopmentApplicationsMainUrl,
             "Upgrade-Insecure-Requests": "1",
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134"
         },
-        jar: jar
     });
-    // console.log(body);
-    $ = cheerio.load(body);
-
-    // let eventValidation = $("input[name='__EVENTVALIDATION']").val();
-    // let viewState = $("input[name='__VIEWSTATE']").val();
-
-    // console.log(eventValidation);
-    // console.log(viewState);
-
-    // Need referer: https://github.com/planningalerts-scrapers/wollongong/blob/master/scraper.rb
-    
-    // console.log("Test 1");
-    // body = await request({
-    //     url: "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/GeneralEnquiry/EnquirySearch.aspx",
-    //     headers: {
-    //         "Referer": "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/default.aspx",
-    //         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134"
-    //     },
-    //     jar: jar
-    // });
-    // console.log(body);
-    // $ = cheerio.load(body);
-
-    // let eventValidation = $("input[name='__EVENTVALIDATION']").val();
-    // let viewState = $("input[name='__VIEWSTATE']").val();
-
-    // console.log("Test 2");
-    // body = await request({
-    //     url: "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/GeneralEnquiry/EnquirySearch.aspx",
-    //     method: "POST",
-    //     followAllRedirects: true,
-    //     headers: {
-    //         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
-    //         "Accept-Encoding": "",
-    //         "Accept-Language": "en-GB,en-US;q=0.9,en;q=0.8",
-    //         "Cache-Control": "max-age=0",
-    //         "Connection": "keep-alive",
-    //         "Content-Type": "application/x-www-form-urlencoded",
-    //         "Host": "epathway.wtcc.sa.gov.au",
-    //         "Origin": "https://epathway.wtcc.sa.gov.au",
-    //         "Referer": "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/GeneralEnquiry/EnquirySearch.aspx",
-    //         "Upgrade-Insecure-Requests": "1",
-    //         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.84 Safari/537.36"
-    //     },
-    //     jar: jar,
-    //     form: {
-    //         __EVENTVALIDATION: eventValidation,
-    //         __VIEWSTATE: viewState,
-    //         __VIEWSTATEGENERATOR: "4A3184D0"
-    //     }
-    // });
-    // console.log(body);
-    // $ = cheerio.load(body);
-
-    // Click the "Date" tab.
-
+    let $ = cheerio.load(body);
     let eventValidation = $("input[name='__EVENTVALIDATION']").val();
     let viewState = $("input[name='__VIEWSTATE']").val();
 
-    console.log("Test 2.1");
+    // Click the "Date" tab.
+
+    console.log("Clicking the \"Date\" tab.");
     body = await request({
-        url: "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/GeneralEnquiry/EnquirySearch.aspx?js=1236367463",
+        url: DevelopmentApplicationsEnquirySearchUrl,
+        jar: jar,
         method: "POST",
         followAllRedirects: true,
         headers: {
@@ -205,11 +178,10 @@ async function main() {
             "Content-Type": "application/x-www-form-urlencoded",
             "Host": "epathway.wtcc.sa.gov.au",
             "Origin": "https://epathway.wtcc.sa.gov.au",
-            "Referer": "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/GeneralEnquiry/EnquirySearch.aspx",
+            "Referer": DevelopmentApplicationsEnquiryListsUrl,
             "Upgrade-Insecure-Requests": "1",
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.84 Safari/537.36"
         },
-        jar: jar,
         form: {
             __EVENTARGUMENT: "2",
             __EVENTTARGET: "ctl00$MainBodyContent$mGeneralEnquirySearchControl$mTabControl$tabControlMenu",
@@ -223,39 +195,18 @@ async function main() {
             "ctl00$mWidth": "1280"
         }
     });
-    // console.log(body);
     $ = cheerio.load(body);
-
-    // eventValidation = $("input[name='__EVENTVALIDATION']").val();
-    // viewState = $("input[name='__VIEWSTATE']").val();
-
-    // console.log("Test 2.2");
-    // body = await request({
-    //     url: "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/GeneralEnquiry/EnquirySearch.aspx?ctl00%24MainBodyContent%24mGeneralEnquirySearchControl%24mTabControl%24ti=2",
-    //     headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    //     jar: jar,
-    //     form: {
-    //         __EVENTARGUMENT: "2",
-    //         __EVENTTARGET: "ctl00$MainBodyContent$mGeneralEnquirySearchControl$mTabControl$tabControlMenu",
-    //         __EVENTVALIDATION: eventValidation,
-    //         __LASTFOCUS: "",
-    //         __VIEWSTATE: viewState,
-    //         __VIEWSTATEGENERATOR: "4A3184D0",
-    //         "ctl00$MainBodyContent$mGeneralEnquirySearchControl$mEnquiryListsDropDownList": 10,
-    //         "ctl00$MainBodyContent$mGeneralEnquirySearchControl$mTabControl$ctl04$mFormattedNumberTextBox": "",
-    //         "ctl00$mHeight": "907",
-    //         "ctl00$mWidth": "1280"
-    //     }
-    // });
-    // console.log(body);
-    // $ = cheerio.load(body);
-
     eventValidation = $("input[name='__EVENTVALIDATION']").val();
     viewState = $("input[name='__VIEWSTATE']").val();
 
-    console.log("Test 3");
+    // Search for development applications in a date range.
+
+    let startDate = "08/07/2018";
+    let endDate = "06/08/2018";
+    console.log(`Searching for applications from ${startDate} to ${endDate}.`);
     body = await request({
-        url: "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/GeneralEnquiry/EnquirySearch.aspx?js=1236367463",
+        url: DevelopmentApplicationsEnquirySearchUrl,
+        jar: jar,
         method: "POST",
         followAllRedirects: true,
         headers: {
@@ -267,11 +218,10 @@ async function main() {
             "Content-Type": "application/x-www-form-urlencoded",
             "Host": "epathway.wtcc.sa.gov.au",
             "Origin": "https://epathway.wtcc.sa.gov.au",
-            "Referer": "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/GeneralEnquiry/EnquirySearch.aspx",
+            "Referer": DevelopmentApplicationsEnquirySearchUrl,
             "Upgrade-Insecure-Requests": "1",
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.84 Safari/537.36"
         },
-        jar: jar,
         form: {
             __EVENTVALIDATION: eventValidation,
             __VIEWSTATE: viewState,
@@ -282,89 +232,78 @@ async function main() {
             "ctl00$MainBodyContent$mGeneralEnquirySearchControl$mTabControl$ctl14$mToDatePicker$dateTextBox": "06/08/2018",
             "ctl00$mHeight": "907",
             "ctl00$mWidth": "1280"
-    } });
-    console.log(body);
+        }
+    });
     $ = cheerio.load(body);
+    eventValidation = $("input[name='__EVENTVALIDATION']").val();
+    viewState = $("input[name='__VIEWSTATE']").val();
 
-    // // Find all CSV URLs on the main page.
+    // Prepare to process multiple pages of results.  Determine the page count from the first page.
 
-    // let urls: string[] = [];
-    // for (let element of $("a.resource-url-analytics").get())
-    //     if (!urls.some(url => url === element.attribs.href))
-    //         urls.push(element.attribs.href);
+    let pageNumber = 1;
+    let pageCount = $("a.otherpagenumber").get().length + 1;
 
-    // if (urls.length === 0) {
-    //     console.log(`No CSV files to parse were found on the page: ${DevelopmentApplicationsUrl}`);
-    //     return;
-    // }
+    do {
+        // Parse a page of development applications.
+        
+        console.log(`Parsing page ${pageNumber} of ${pageCount}.`);
+        pageNumber++;
+        for (let tableRow of $("tr").get()) {
+            let tableCells = $(tableRow).children("td").get();
+            if (tableCells.length >= 4) {
+                let applicationNumber = $(tableCells[0]).text().trim()
+                let receivedDate = moment($(tableCells[1]).text().trim(), "D/MM/YYYY", true);  // allows the leading zero of the day to be omitted
+                let reason = $(tableCells[2]).text().trim();
+                let address = $(tableCells[3]).text().trim();
 
-    // // Retrieve two of the development application CSV files (the most recent and one other random
-    // // selection).  Retrieving all development application CSV files may otherwise use too much
-    // // memory and result in morph.io terminating the current process.
-    
-    // let selectedUrls = [ urls.pop() ];
-    // if (urls.length >= 1)
-    //     selectedUrls.push(urls[getRandom(0, urls.length)]);
+                if (/[0-9]+\/[0-9]+.*/.test(applicationNumber) && receivedDate.isValid()) {
+                    await insertRow(database, {
+                        applicationNumber: applicationNumber,
+                        address: address,
+                        reason: reason,
+                        informationUrl: DevelopmentApplicationsMainUrl,
+                        commentUrl: CommentUrl,
+                        scrapeDate: moment().format("YYYY-MM-DD"),
+                        receivedDate: receivedDate.isValid() ? receivedDate.format("YYYY-MM-DD") : ""
+                    });
+                }
+            }
+        }
 
-    // for (let url of selectedUrls) {
-    //     console.log(`Retrieving: ${url}`);
-    //     let body = await request({ url: url });
-    //     let rows = parse(body);
-    //     if (rows.length === 0)
-    //         continue;
+        // Navigate to the next page of development applications.
 
-    //     // Determine which columns contain the required development application information.
-
-    //     let applicationNumberColumnIndex = -1;
-    //     let receivedDateColumnIndex = -1;
-    //     let reasonColumnIndex = -1;
-    //     let addressColumnIndex1 = -1;
-    //     let addressColumnIndex2 = -1;
-
-    //     for (let columnIndex = 0; columnIndex < rows[0].length; columnIndex++) {
-    //         let cell: string = rows[0][columnIndex];
-    //         if (cell === "ApplicationNumber")
-    //             applicationNumberColumnIndex = columnIndex;
-    //         else if (cell === "LodgementDate")
-    //             receivedDateColumnIndex = columnIndex;
-    //         else if (cell === "ApplicationDesc")
-    //             reasonColumnIndex = columnIndex;
-    //         else if (cell === "PropertyAddress")
-    //             addressColumnIndex1 = columnIndex;
-    //         else if (cell === "PropertySuburbPostCode")
-    //             addressColumnIndex2 = columnIndex;
-    //     }
-
-    //     if (applicationNumberColumnIndex < 0 || (addressColumnIndex1 < 0 && addressColumnIndex2 < 0)) {
-    //         console.log(`Could not parse any development applications from ${url}.`);
-    //         continue;
-    //     }
-
-    //     // Extract the development application information.
-
-    //     let developmentApplications = [];
-    //     for (let rowIndex = 1; rowIndex < rows.length; rowIndex++) {
-    //         let row = rows[rowIndex];
-    //         let applicationNumber = row[applicationNumberColumnIndex].trim();
-    //         let address1 = (addressColumnIndex1 < 0) ? "" : row[addressColumnIndex1].trim();
-    //         let address2 = (addressColumnIndex2 < 0) ? "" : row[addressColumnIndex2].trim();
-    //         let reason = (reasonColumnIndex < 0) ? "" : row[reasonColumnIndex].trim();
-    //         let receivedDate = moment(((receivedDateColumnIndex < 0) ? null : row[receivedDateColumnIndex].trim()), "D/MM/YYYY HH:mm:ss A", true);  // allows the leading zero of the day to be omitted
-    //         let address = address1 + ((address1 !== "" && address2 !== "") ? " " : "") + address2;
-    //         address = address.trim().replace(/\s\s+/g, " ");  // reduce multiple consecutive spaces in the address to a single space
-
-    //         if (applicationNumber !== "" && address !== "")
-    //             await insertRow(database, {
-    //                 applicationNumber: applicationNumber,
-    //                 address: address,
-    //                 reason: reason,
-    //                 informationUrl: url,
-    //                 commentUrl: CommentUrl,
-    //                 scrapeDate: moment().format("YYYY-MM-DD"),
-    //                 receivedDate: receivedDate.isValid() ? receivedDate.format("YYYY-MM-DD") : ""
-    //             });
-    //     }
-    // }
+        console.log("Retrieving the next page of applications.");
+        body = await request({
+            url: `${DevelopmentApplicationsEnquirySummaryViewUrl}?PageNumber=${pageNumber}`,
+            jar: jar,
+            method: "POST",
+            followAllRedirects: true,
+            headers: {
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+                "Accept-Encoding": "",
+                "Accept-Language": "en-GB,en-US;q=0.9,en;q=0.8",
+                "Cache-Control": "max-age=0",
+                "Connection": "keep-alive",
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Host": "epathway.wtcc.sa.gov.au",
+                "Origin": "https://epathway.wtcc.sa.gov.au",
+                "Referer": DevelopmentApplicationsEnquirySummaryViewUrl,
+                "Upgrade-Insecure-Requests": "1",
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.84 Safari/537.36"
+            },
+            form: {
+                __EVENTARGUMENT: "",
+                __EVENTTARGET: `ctl00$MainBodyContent$mPagingControl$pageButton_${pageNumber}`,
+                __EVENTVALIDATION: eventValidation,
+                __LASTFOCUS: "",
+                __VIEWSTATE: viewState,
+                __VIEWSTATEGENERATOR: "4A3184D0"
+            }
+        });
+        $ = cheerio.load(body);
+        eventValidation = $("input[name='__EVENTVALIDATION']").val();
+        viewState = $("input[name='__VIEWSTATE']").val();
+    } while (pageCount === null || pageNumber <= pageCount || pageNumber >= 100)  // enforce a hard limit of 100 pages (as a safety precaution)
 }
 
 main().then(() => console.log("Complete.")).catch(error => console.error(error));
