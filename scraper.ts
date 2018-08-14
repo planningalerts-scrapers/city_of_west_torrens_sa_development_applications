@@ -106,7 +106,7 @@ async function main() {
         await request({ url: tokenUrl, jar: jar });    
     }
 
-    // Retrieve the enquiry page.
+    // Retrieve the enquiry lists page.
 
     console.log(`Retrieving page: ${DevelopmentApplicationsEnquiryListsUrl}`);
     body = await request({ url: DevelopmentApplicationsEnquiryListsUrl, jar: jar });
