@@ -1,10 +1,6 @@
 // Parses the development applications at the South Australian City of West Torrens web site and
 // places them in a database.
 //
-// In each VSCode session: to automatically compile this TypeScript script into JavaScript whenever
-// the TypeScript is changed and saved, press Ctrl+Shift+B and select "tsc:watch - tsconfig.json".
-// This starts a task that watches for changes to the TypeScript script.
-//
 // Michael Bone
 // 5th August 2018
 
