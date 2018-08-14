@@ -161,7 +161,8 @@ async function main() {
     // Prepare to process multiple pages of results.  Determine the page count from the first page.
 
     let pageNumber = 1;
-    let pageCount = $("a.otherpagenumber").get().length + 1;
+    let pageCountText = $("#ctl00_MainBodyContent_mPagingControl_pageNumberLabel").text();
+    let pageCount = Math.max(1, Number(pageCountText.match(/[0-9]+$/)[0])) || 1;  // "|| 1" ensures that NaN becomes 1
 
     do {
         // Parse a page of development applications.
