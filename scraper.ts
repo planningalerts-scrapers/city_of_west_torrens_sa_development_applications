@@ -1,10 +1,6 @@
 // Parses the development applications at the South Australian City of West Torrens web site and
 // places them in a database.
 //
-// In each VSCode session: to automatically compile this TypeScript script into JavaScript whenever
-// the TypeScript is changed and saved, press Ctrl+Shift+B and select "tsc:watch - tsconfig.json".
-// This starts a task that watches for changes to the TypeScript script.
-//
 // Michael Bone
 // 5th August 2018
 
@@ -29,8 +25,12 @@ async function initializeDatabase() {
     return new Promise((resolve, reject) => {
         let database = new sqlite3.Database("data.sqlite");
         database.serialize(() => {
-            database.run("create table if not exists [data] ([council_reference] text primary key, [address] text, [description] text, [info_url] text, [comment_url] text, [date_scraped] text, [date_received] text, [on_notice_from] text, [on_notice_to] text)");
-            resolve(database);
+            database.all("PRAGMA table_info('data')", (error, rows) => {
+                if (rows.some(row => row.name === "on_notice_from"))
+                    database.run("drop table [data]");  // ensure that the on_notice_from (and on_notice_to) columns are removed
+                database.run("create table if not exists [data] ([council_reference] text primary key, [address] text, [description] text, [info_url] text, [comment_url] text, [date_scraped] text, [date_received] text)");
+                resolve(database);
+            });
         });
     });
 }
@@ -39,26 +39,24 @@ async function initializeDatabase() {
 
 async function insertRow(database, developmentApplication) {
     return new Promise((resolve, reject) => {
-        let sqlStatement = database.prepare("insert or ignore into [data] values (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        let sqlStatement = database.prepare("insert or ignore into [data] values (?, ?, ?, ?, ?, ?, ?)");
         sqlStatement.run([
             developmentApplication.applicationNumber,
             developmentApplication.address,
-            developmentApplication.reason,
+            developmentApplication.description,
             developmentApplication.informationUrl,
             developmentApplication.commentUrl,
             developmentApplication.scrapeDate,
-            developmentApplication.receivedDate,
-            null,
-            null
+            developmentApplication.receivedDate
         ], function(error, row) {
             if (error) {
                 console.error(error);
                 reject(error);
             } else {
                 if (this.changes > 0)
-                    console.log(`    Inserted: application \"${developmentApplication.applicationNumber}\" with address \"${developmentApplication.address}\" and reason \"${developmentApplication.reason}\" into the database.`);
+                    console.log(`    Inserted: application \"${developmentApplication.applicationNumber}\" with address \"${developmentApplication.address}\" and description \"${developmentApplication.description}\" into the database.`);
                 else
-                    console.log(`    Skipped: application \"${developmentApplication.applicationNumber}\" with address \"${developmentApplication.address}\" and reason \"${developmentApplication.reason}\" because it was already present in the database.`);
+                    console.log(`    Skipped: application \"${developmentApplication.applicationNumber}\" with address \"${developmentApplication.address}\" and description \"${developmentApplication.description}\" because it was already present in the database.`);
                 sqlStatement.finalize();  // releases any locks
                 resolve(row);
             }
@@ -110,7 +108,7 @@ async function main() {
         await request({ url: tokenUrl, jar: jar });    
     }
 
-    // Retrieve the enquiry page.
+    // Retrieve the enquiry lists page.
 
     console.log(`Retrieving page: ${DevelopmentApplicationsEnquiryListsUrl}`);
     body = await request({ url: DevelopmentApplicationsEnquiryListsUrl, jar: jar });
@@ -165,7 +163,8 @@ async function main() {
     // Prepare to process multiple pages of results.  Determine the page count from the first page.
 
     let pageNumber = 1;
-    let pageCount = $("a.otherpagenumber").get().length + 1;
+    let pageCountText = $("#ctl00_MainBodyContent_mPagingControl_pageNumberLabel").text();
+    let pageCount = Math.max(1, Number(pageCountText.match(/[0-9]+$/)[0])) || 1;  // "|| 1" ensures that NaN becomes 1
 
     do {
         // Parse a page of development applications.
@@ -178,14 +177,14 @@ async function main() {
             if (tableCells.length >= 4) {
                 let applicationNumber = $(tableCells[0]).text().trim()
                 let receivedDate = moment($(tableCells[1]).text().trim(), "D/MM/YYYY", true);  // allows the leading zero of the day to be omitted
-                let reason = $(tableCells[2]).text().trim();
+                let description = $(tableCells[2]).text().trim();
                 let address = $(tableCells[3]).text().trim();
 
                 if (/[0-9]+\/[0-9]+.*/.test(applicationNumber) && receivedDate.isValid()) {
                     await insertRow(database, {
                         applicationNumber: applicationNumber,
                         address: address,
-                        reason: reason,
+                        description: description,
                         informationUrl: DevelopmentApplicationsDefaultUrl,
                         commentUrl: CommentUrl,
                         scrapeDate: moment().format("YYYY-MM-DD"),
