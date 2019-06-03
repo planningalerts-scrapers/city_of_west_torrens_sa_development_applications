@@ -11,3 +11,4 @@ package-lock.json
 !.vscode/tasks.json
 
 results_js.yml
+results_ruby.yml
