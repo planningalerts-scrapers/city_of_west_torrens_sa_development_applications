@@ -17,7 +17,6 @@ const DevelopmentApplicationsDefaultUrl = "https://epathway.wtcc.sa.gov.au/ePath
 const DevelopmentApplicationsEnquiryListsUrl = "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/GeneralEnquiry/EnquiryLists.aspx";
 const DevelopmentApplicationsEnquirySearchUrl = "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/GeneralEnquiry/EnquirySearch.aspx";
 const DevelopmentApplicationsEnquirySummaryViewUrl = "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/GeneralEnquiry/EnquirySummaryView.aspx";
-const CommentUrl = "mailto:csu@wtcc.sa.gov.au";
 
 // Sets up an sqlite database.
 
@@ -28,7 +27,7 @@ async function initializeDatabase() {
             database.all("PRAGMA table_info('data')", (error, rows) => {
                 if (rows.some(row => row.name === "on_notice_from"))
                     database.run("drop table [data]");  // ensure that the on_notice_from (and on_notice_to) columns are removed
-                database.run("create table if not exists [data] ([council_reference] text primary key, [address] text, [description] text, [info_url] text, [comment_url] text, [date_scraped] text, [date_received] text)");
+                database.run("create table if not exists [data] ([council_reference] text primary key, [address] text, [description] text, [info_url] text, [date_scraped] text, [date_received] text)");
                 resolve(database);
             });
         });
@@ -39,13 +38,12 @@ async function initializeDatabase() {
 
 async function insertRow(database, developmentApplication) {
     return new Promise((resolve, reject) => {
-        let sqlStatement = database.prepare("insert or replace into [data] values (?, ?, ?, ?, ?, ?, ?)");
+        let sqlStatement = database.prepare("insert or replace into [data] values (?, ?, ?, ?, ?, ?)");
         sqlStatement.run([
             developmentApplication.applicationNumber,
             developmentApplication.address,
             developmentApplication.description,
             developmentApplication.informationUrl,
-            developmentApplication.commentUrl,
             developmentApplication.scrapeDate,
             developmentApplication.receivedDate
         ], function(error, row) {
@@ -86,7 +84,7 @@ async function main() {
     let database = await initializeDatabase();
 
     // Create one cookie jar and use it throughout.
-    
+
     let jar = request.jar();
 
     // Retrieve the main page.
@@ -102,7 +100,7 @@ async function main() {
     if (token !== null) {
         let tokenUrl = `${DevelopmentApplicationsDefaultUrl}?js=${token}`;
         console.log(`Retrieving page: ${tokenUrl}`);
-        await request({ url: tokenUrl, jar: jar });    
+        await request({ url: tokenUrl, jar: jar });
     }
 
     // Retrieve the enquiry lists page.
@@ -165,7 +163,7 @@ async function main() {
 
     do {
         // Parse a page of development applications.
-        
+
         console.log(`Parsing page ${pageNumber} of ${pageCount}.`);
         pageNumber++;
 
@@ -183,7 +181,6 @@ async function main() {
                         address: address,
                         description: description,
                         informationUrl: DevelopmentApplicationsDefaultUrl,
-                        commentUrl: CommentUrl,
                         scrapeDate: moment().format("YYYY-MM-DD"),
                         receivedDate: receivedDate.isValid() ? receivedDate.format("YYYY-MM-DD") : ""
                     });
