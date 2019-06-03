@@ -17,6 +17,7 @@ const DevelopmentApplicationsDefaultUrl = "https://epathway.wtcc.sa.gov.au/ePath
 const DevelopmentApplicationsEnquiryListsUrl = "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/GeneralEnquiry/EnquiryLists.aspx";
 const DevelopmentApplicationsEnquirySearchUrl = "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/GeneralEnquiry/EnquirySearch.aspx";
 const DevelopmentApplicationsEnquirySummaryViewUrl = "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/GeneralEnquiry/EnquirySummaryView.aspx";
+const DevelopmentApplicationsInformationUrl = "https://epathway.wtcc.sa.gov.au/ePathway/Production/Web/GeneralEnquiry/EnquiryLists.aspx?ModuleCode=LAP"
 
 // Sets up an sqlite database.
 
@@ -180,7 +181,7 @@ async function main() {
                         applicationNumber: applicationNumber,
                         address: address,
                         description: description,
-                        informationUrl: DevelopmentApplicationsDefaultUrl,
+                        informationUrl: DevelopmentApplicationsInformationUrl,
                         scrapeDate: moment().format("YYYY-MM-DD"),
                         receivedDate: receivedDate.isValid() ? receivedDate.format("YYYY-MM-DD") : ""
                     });
